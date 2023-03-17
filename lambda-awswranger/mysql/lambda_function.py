@@ -20,7 +20,7 @@ MYSQL_HOST = os.getenv("MYSQL_HOST")
 MYSQL_DATABASE = os.getenv("MYSQL_DATABASE")
 MYSQL_PORT = int(os.getenv("MYSQL_PORT"))
 DESTINATION_PATH = os.getenv("DESTINATION_PATH")
-LIMIT = int(os.getenv("LIMIT", 100))
+LIMIT = int(os.getenv("LIMIT", 1000))
 OFFSET_PARAMETER_NAME = os.getenv("OFFSET_PARAMETER_NAME")
 LOG_LEVEL = int(os.getenv("LOG_LEVEL"), logging.WARNING)
 
@@ -53,15 +53,18 @@ def read_data_from_source(
 
 
 def save_df_to_destination_source(
-    df: pd.DataFrame, path: str, mode: str = "overwrite"
+    df: pd.DataFrame, path: str, partition_cols: list, mode: str = "append"
 ) -> None:
     """Save DataFrame to destination in PARQUET format"""
 
-    wr.s3.to_parquet(df=df, path=path, dataset=True, mode=mode)
+    wr.s3.to_parquet(
+        df=df, path=path, dataset=True, mode=mode, partition_cols=partition_cols
+    )
 
 
 def get_last_offset(client, parameter_name: str) -> int:
     """Retrieve the last offset save"""
+    return 0
     response = client.get_parameter(Name=parameter_name)
     return int(response["Parameter"]["Value"])
 
@@ -108,7 +111,7 @@ def lambda_handler(event: dict, context: LambdaContext) -> None:
 
         new_offset_value = offset + df_size
         logger.info(f"Novo OFFSET: {new_offset_value}")
-        update_offset(parameter_client, OFFSET_PARAMETER_NAME, new_offset_value)
+        # update_offset(parameter_client, OFFSET_PARAMETER_NAME, new_offset_value)
 
         return None
 

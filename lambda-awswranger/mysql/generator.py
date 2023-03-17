@@ -46,7 +46,7 @@ def generator(number_of_rows: int = 100) -> None:
                 values = get_values()
                 # Create a new record
                 sql = "INSERT INTO `transactions` (`id`, `source_account`, `destination_account`, `amount`, `transaction_type`, `date`) VALUES (%s, %s, %s, %s, %s, %s)"
-                print(values)
+                # print(values)
                 cursor.execute(sql, values)
 
         # connection is not autocommit by default. So you must commit to save
@@ -55,4 +55,6 @@ def generator(number_of_rows: int = 100) -> None:
 
 
 if "__main__" == __name__:
-    generator()
+    for _ in range(10):
+        generator()
+        print("+ 100 rows")
