@@ -115,7 +115,7 @@ def put_custom_metric(function_name: str, function_version: str, message: str, m
                     "Timestamp": round(datetime.timestamp(datetime.now()) * 1000),
                     "CloudWatchMetrics": [
                         {
-                            "Namespace": f"emf-lambda:{function_name}",
+                            "Namespace": f"emf-lambda-{function_name}",
                             "Dimensions": [["functionVersion"]],
                             "Metrics": [{"Name": metric_name, "Unit": unit}],
                         }
